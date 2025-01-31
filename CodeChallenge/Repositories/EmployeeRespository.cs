@@ -33,6 +33,14 @@ namespace CodeChallenge.Repositories
             return compensation;
         }
 
+        public Compensation UpdateCompensation(Compensation compensation)
+        {
+            //grab matching compensation and update salary
+            var result = _employeeContext.Compensations.SingleOrDefault(e => e.EmployeeId == compensation.EmployeeId && e.EffectiveDate == compensation.EffectiveDate);
+            result.Salary = compensation.Salary;
+            return result;
+        }
+
         public List<Compensation> GetCompensation(Employee employee)
         {
             List<Compensation> compensations = _employeeContext.Compensations.Where(e => e.EmployeeId == employee.EmployeeId).ToList();

@@ -103,6 +103,20 @@ namespace CodeChallenge.Services
 
         public Compensation CreateCompensation(Compensation compensation)
         {
+            var compensations = _employeeRepository.GetCompensation(GetById(compensation.EmployeeId));
+
+            //added ability to update salary for an existing Id + effective date because it just seemed nice
+            foreach(Compensation c in compensations)
+            {
+                //check Id + effective date for existing compensations
+                if (c.EmployeeId == compensation.EmployeeId && c.EffectiveDate == compensation.EffectiveDate)
+                {
+                    _employeeRepository.UpdateCompensation(compensation);
+                    _employeeRepository.SaveAsync().Wait();
+                    return compensation;
+                }
+            }
+
              _employeeRepository.CreateCompensation(compensation);
              _employeeRepository.SaveAsync().Wait();
 

@@ -13,5 +13,6 @@ namespace CodeChallenge.Repositories
         Task SaveAsync();
         List<Compensation> GetCompensation(Employee employee);
         Compensation CreateCompensation(Compensation compensation);
+        Compensation UpdateCompensation(Compensation compensation);
     }
 }
