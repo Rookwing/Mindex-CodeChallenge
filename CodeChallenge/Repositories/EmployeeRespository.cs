@@ -27,9 +27,25 @@ namespace CodeChallenge.Repositories
             return employee;
         }
 
+        public Compensation CreateCompensation(Compensation compensation)
+        {
+            _employeeContext.Compensations.Add(compensation);
+            return compensation;
+        }
+
+        public List<Compensation> GetCompensation(Employee employee)
+        {
+            List<Compensation> compensations = _employeeContext.Compensations.Where(e => e.EmployeeId == employee.EmployeeId).ToList();
+            return compensations;
+        }
+
         public Employee GetById(string id)
         {
-            return _employeeContext.Employees.SingleOrDefault(e => e.EmployeeId == id);
+            //had to enumerate employees due to weird bug not allowing direct hires to populate correctly.
+            //this fixed the issue. otherwise they just came through as null unless I debugged and enumerated the results.
+            List<Employee> employees = _employeeContext.Employees.ToList();
+            Employee employee = employees.SingleOrDefault(e => e.EmployeeId == id);
+            return employee;
         }
 
         public Task SaveAsync()

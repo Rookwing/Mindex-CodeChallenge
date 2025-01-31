@@ -59,5 +59,54 @@ namespace CodeChallenge.Services
 
             return newEmployee;
         }
+
+        public ReportingStructure GetEmployeeReports(Employee employee)
+        {
+            //define a reporting structure to be referenced by the loop
+            ReportingStructure reportingStructure = new ReportingStructure();
+            
+            //employee shouldn't be null, but check to be sure
+            if (employee != null)
+            {
+                //assign the original employee to the reporting structure
+                reportingStructure.Employee = employee;
+                //recursively go through direct reports, referencing the reporting structure
+                ReportRecursion(employee, ref reportingStructure);
+                return reportingStructure;
+            }
+
+            return null;
+        }
+
+        private static void ReportRecursion(Employee employee, ref ReportingStructure reports)
+        {
+            if(employee != null && employee.DirectReports != null)
+            {
+                //recursively go through direct reports, adding to the count in the reference
+                foreach(Employee e in employee.DirectReports)
+                {
+                    reports.NumberOfReports++;
+                    ReportRecursion(e, ref reports);
+                }
+            }
+        }
+
+        public List<Compensation> GetCompensation(Employee employee)
+        {
+            if (employee != null)
+            {
+                return _employeeRepository.GetCompensation(employee);
+            }
+
+            return null;
+        }
+
+        public Compensation CreateCompensation(Compensation compensation)
+        {
+             _employeeRepository.CreateCompensation(compensation);
+             _employeeRepository.SaveAsync().Wait();
+
+            return compensation;
+        }
     }
 }

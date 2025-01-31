@@ -58,5 +58,54 @@ namespace CodeChallenge.Controllers
 
             return Ok(newEmployee);
         }
+
+        [HttpGet("reports/{id}", Name = "getEmployeeReports")]
+        public IActionResult GetEmployeeReports(string id)
+        {
+            _logger.LogDebug($"Received employee direct report get request for '{id}'");
+
+            //get employee by Id, return not found if empty
+            var employee = _employeeService.GetById(id);
+            if (employee == null)
+                return NotFound();
+
+            //Get reporting structure from service
+            var reportingStructure = _employeeService.GetEmployeeReports(employee);
+
+            return Ok(reportingStructure);
+        }
+
+        [HttpGet("compensation/{id}", Name = "getEmployeeCompensation")]
+        public IActionResult GetEmployeeCompensation(string id)
+        {
+            _logger.LogDebug($"Received employee compensation get request for '{id}'");
+
+            //get employee by Id, return not found if empty
+            var employee = _employeeService.GetById(id);
+            if (employee == null)
+                return NotFound();
+
+            //Get compensation from service
+            List<Compensation> compensation = _employeeService.GetCompensation(employee);
+
+            return Ok(compensation);
+        }
+
+        [HttpPost("compensation")]
+        public IActionResult CreateEmployeeCompensation([FromBody]Compensation compensation)
+        {
+            _logger.LogDebug($"Received employee compensation create request for '{compensation.EmployeeId}'");
+
+            //check for employee, return not found if empty
+            var employee = _employeeService.GetById(compensation.EmployeeId);
+            if (employee == null)
+                return NotFound();
+
+            //Create compensation with service
+            _employeeService.CreateCompensation(compensation);
+
+            //Return employee with new compensation added
+            return GetEmployeeCompensation(compensation.EmployeeId);
+        }
     }
 }
