@@ -21,7 +21,7 @@ namespace CodeChallenge.Services
 
         public Employee Create(Employee employee)
         {
-            if(employee != null)
+            if (employee != null)
             {
                 _employeeRepository.Add(employee);
                 _employeeRepository.SaveAsync().Wait();
@@ -32,7 +32,7 @@ namespace CodeChallenge.Services
 
         public Employee GetById(string id)
         {
-            if(!String.IsNullOrEmpty(id))
+            if (!String.IsNullOrEmpty(id))
             {
                 return _employeeRepository.GetById(id);
             }
@@ -42,7 +42,7 @@ namespace CodeChallenge.Services
 
         public Employee Replace(Employee originalEmployee, Employee newEmployee)
         {
-            if(originalEmployee != null)
+            if (originalEmployee != null)
             {
                 _employeeRepository.Remove(originalEmployee);
                 if (newEmployee != null)
@@ -64,26 +64,22 @@ namespace CodeChallenge.Services
         {
             //define a reporting structure to be referenced by the loop
             ReportingStructure reportingStructure = new ReportingStructure();
-            
-            //employee shouldn't be null, but check to be sure
-            if (employee != null)
-            {
-                //assign the original employee to the reporting structure
-                reportingStructure.Employee = employee;
-                //recursively go through direct reports, referencing the reporting structure
-                ReportRecursion(employee, ref reportingStructure);
-                return reportingStructure;
-            }
 
-            return null;
+            //assign the original employee to the reporting structure
+            //not checking for null because we did that in the controller
+            reportingStructure.Employee = employee;
+            //recursively go through direct reports, referencing the reporting structure
+            ReportRecursion(employee, ref reportingStructure);
+            return reportingStructure;
+
         }
 
         private static void ReportRecursion(Employee employee, ref ReportingStructure reports)
         {
-            if(employee != null && employee.DirectReports != null)
+            if (employee != null && employee.DirectReports != null)
             {
                 //recursively go through direct reports, adding to the count in the reference
-                foreach(Employee e in employee.DirectReports)
+                foreach (Employee e in employee.DirectReports)
                 {
                     reports.NumberOfReports++;
                     ReportRecursion(e, ref reports);
@@ -106,7 +102,7 @@ namespace CodeChallenge.Services
             var compensations = _employeeRepository.GetCompensation(GetById(compensation.EmployeeId));
 
             //added ability to update salary for an existing Id + effective date because it just seemed nice
-            foreach(Compensation c in compensations)
+            foreach (Compensation c in compensations)
             {
                 //check Id + effective date for existing compensations
                 if (c.EmployeeId == compensation.EmployeeId && c.EffectiveDate == compensation.EffectiveDate)
@@ -117,8 +113,8 @@ namespace CodeChallenge.Services
                 }
             }
 
-             _employeeRepository.CreateCompensation(compensation);
-             _employeeRepository.SaveAsync().Wait();
+            _employeeRepository.CreateCompensation(compensation);
+            _employeeRepository.SaveAsync().Wait();
 
             return compensation;
         }
